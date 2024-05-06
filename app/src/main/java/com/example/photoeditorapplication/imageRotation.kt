@@ -22,3 +22,5 @@ fun rotateImage(source: Bitmap, clockwise: Boolean): Bitmap {
 
     return result
 }
+
+

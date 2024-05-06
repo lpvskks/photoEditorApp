@@ -68,6 +68,12 @@ class MainActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == GALLERY_REQUEST_CODE && resultCode == Activity.RESULT_OK && data != null) {
             val selectedImageUri = data.data
+
+            val editIntent = Intent(this, ImageEditActivity::class.java).apply {
+                putExtra("imageUri", selectedImageUri)
+            }
+            startActivity(editIntent)
         }
     }
+
 }
