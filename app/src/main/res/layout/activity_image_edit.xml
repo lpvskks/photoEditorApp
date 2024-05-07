@@ -4,23 +4,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#000000"
     tools:context=".ImageEditActivity">
-
-    <ImageView
-        android:id="@+id/selectedImageView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#000000"
-        android:scaleType="centerInside" />
 
     <ImageView
         android:id="@+id/closeButton"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:layout_alignParentTop="true"
         android:layout_alignParentStart="true"
-        android:layout_marginTop="16dp"
+        android:layout_alignParentTop="true"
         android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
         android:contentDescription="@string/close_button_description"
         android:src="@drawable/close_24px" />
 
@@ -35,26 +29,46 @@
         app:srcCompat="@drawable/file_download" />
 
     <HorizontalScrollView
+        android:id="@+id/horizontalScrollView"
         android:layout_width="match_parent"
         android:layout_height="70dp"
         android:layout_alignParentBottom="true"
         android:fillViewport="true"
         android:scrollbars="horizontal">
 
+
         <LinearLayout
             android:id="@+id/scrollViewContainer"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:background="#000000"
             android:orientation="horizontal">
 
 
             <ImageButton
                 android:id="@+id/imageButton4"
-                android:layout_width="65dp"
-                android:layout_height="65dp"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
                 android:backgroundTint="#000000"
                 app:srcCompat="@drawable/refreshh" />
 
+            <ImageButton
+                android:id="@+id/imageButton5"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:backgroundTint="#000000"
+                app:srcCompat="@drawable/colours" />
         </LinearLayout>
     </HorizontalScrollView>
+
+    <ImageView
+        android:id="@+id/selectedImageView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/horizontalScrollView"
+        android:layout_below="@id/closeButton"
+        android:layout_marginTop="16dp"
+        android:background="#000000"
+        android:scaleType="centerInside" />
+
 </RelativeLayout>
