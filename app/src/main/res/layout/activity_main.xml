@@ -16,10 +16,10 @@
         android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.502"
+        app:layout_constraintHorizontal_bias="0.284"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.938" />
+        app:layout_constraintVertical_bias="0.947" />
 
     <TextView
         android:id="@+id/textView"
@@ -37,11 +37,16 @@
         app:layout_constraintVertical_bias="0.64" />
 
     <ImageButton
-        android:id="@+id/imageButton2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:srcCompat="@android:drawable/alert_light_frame"
-        tools:layout_editor_absoluteX="331dp"
-        tools:layout_editor_absoluteY="680dp" />
+        android:id="@+id/cameraButton"
+        android:layout_width="96dp"
+        android:layout_height="77dp"
+        android:backgroundTint="#000000"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.243"
+        app:layout_constraintStart_toEndOf="@+id/button"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.943"
+        app:srcCompat="@drawable/cmr" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
