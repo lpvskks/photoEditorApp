@@ -34,4 +34,27 @@
         android:layout_marginEnd="16dp"
         app:srcCompat="@drawable/file_download" />
 
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:layout_alignParentBottom="true"
+        android:fillViewport="true"
+        android:scrollbars="horizontal">
+
+        <LinearLayout
+            android:id="@+id/scrollViewContainer"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+
+            <ImageButton
+                android:id="@+id/imageButton4"
+                android:layout_width="65dp"
+                android:layout_height="65dp"
+                android:backgroundTint="#000000"
+                app:srcCompat="@drawable/refreshh" />
+
+        </LinearLayout>
+    </HorizontalScrollView>
 </RelativeLayout>
