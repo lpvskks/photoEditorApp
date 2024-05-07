@@ -14,6 +14,9 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import android.graphics.Matrix
+
+
 
 class ImageEditActivity : AppCompatActivity() {
 
@@ -30,6 +33,7 @@ class ImageEditActivity : AppCompatActivity() {
         imageView = findViewById(R.id.selectedImageView)
         val closeButton = findViewById<ImageView>(R.id.closeButton)
         val saveButton = findViewById<ImageView>(R.id.saveButton)
+        val rotateButton = findViewById<ImageView>(R.id.imageButton4)
         val imageUri: Uri? = intent.getParcelableExtra("imageUri")
         imageView.setImageURI(imageUri)
 
@@ -40,6 +44,22 @@ class ImageEditActivity : AppCompatActivity() {
         saveButton.setOnClickListener {
             requestStoragePermission()
         }
+
+        rotateButton.setOnClickListener {
+            rotateImage()
+        }
+    }
+
+    private fun rotateImage() {
+        val currentBitmap = (imageView.drawable as BitmapDrawable).bitmap
+        val rotatedBitmap = rotateBitmap(currentBitmap, 90f)
+        imageView.setImageBitmap(rotatedBitmap)
+    }
+
+    private fun rotateBitmap(source: Bitmap, degrees: Float): Bitmap {
+        val matrix = Matrix()
+        matrix.postRotate(degrees)
+        return Bitmap.createBitmap(source, 0, 0, source.width, source.height, matrix, true)
     }
 
     private fun requestStoragePermission() {
