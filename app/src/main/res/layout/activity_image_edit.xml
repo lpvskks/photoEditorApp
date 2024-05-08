@@ -58,6 +58,34 @@
                 android:layout_height="70dp"
                 android:backgroundTint="#000000"
                 app:srcCompat="@drawable/colours" />
+
+            <ImageButton
+                android:id="@+id/imageButton"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:backgroundTint="#000000"
+                app:srcCompat="@drawable/retouch_1" />
+
+            <ImageButton
+                android:id="@+id/imageButton2"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:backgroundTint="#000000"
+                app:srcCompat="@drawable/zoom_in_1" />
+
+            <ImageButton
+                android:id="@+id/imageButton3"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:backgroundTint="#000000"
+                app:srcCompat="@drawable/cube_1" />
+
+            <ImageButton
+                android:id="@+id/imageButton6"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:backgroundTint="#000000"
+                app:srcCompat="@drawable/face_detection_1" />
         </LinearLayout>
     </HorizontalScrollView>
 
