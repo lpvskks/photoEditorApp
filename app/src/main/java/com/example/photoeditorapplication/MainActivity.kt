@@ -1,5 +1,4 @@
 package com.example.photoeditorapplication
-
 import android.Manifest
 import android.app.Activity
 import android.content.Intent
@@ -16,7 +15,6 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import android.graphics.Bitmap
 import java.io.ByteArrayOutputStream
-
 
 @Suppress("DEPRECATION")
 class MainActivity : AppCompatActivity() {
@@ -47,6 +45,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+
 
     private fun checkPermissionAndOpenGallery() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
