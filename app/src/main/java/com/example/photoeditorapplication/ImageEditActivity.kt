@@ -4,23 +4,24 @@ import android.Manifest
 import android.content.ContentValues
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.graphics.Matrix
 import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
+import android.view.View
+import android.widget.HorizontalScrollView
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import android.graphics.Matrix
-
-
 
 class ImageEditActivity : AppCompatActivity() {
 
     private lateinit var imageView: ImageView
+    private lateinit var filtersScrollView: HorizontalScrollView
 
     companion object {
         private const val REQUEST_STORAGE_PERMISSION_CODE = 101
@@ -31,10 +32,14 @@ class ImageEditActivity : AppCompatActivity() {
         setContentView(R.layout.activity_image_edit)
 
         imageView = findViewById(R.id.selectedImageView)
+        filtersScrollView = findViewById(R.id.filtersScrollView)
+
         val closeButton = findViewById<ImageView>(R.id.closeButton)
         val saveButton = findViewById<ImageView>(R.id.saveButton)
-        val rotateButton = findViewById<ImageView>(R.id.imageButton4)
+        val rotateButton = findViewById<ImageView>(R.id.photoRotationButton)
+        val filtersButton = findViewById<ImageView>(R.id.filtersButton)
         val imageUri: Uri? = intent.getParcelableExtra("imageUri")
+
         imageView.setImageURI(imageUri)
 
         closeButton.setOnClickListener {
@@ -48,6 +53,10 @@ class ImageEditActivity : AppCompatActivity() {
         rotateButton.setOnClickListener {
             rotateImage()
         }
+
+        filtersButton.setOnClickListener {
+            toggleFiltersVisibility()
+        }
     }
 
     private fun rotateImage() {
@@ -60,6 +69,14 @@ class ImageEditActivity : AppCompatActivity() {
         val matrix = Matrix()
         matrix.postRotate(degrees)
         return Bitmap.createBitmap(source, 0, 0, source.width, source.height, matrix, true)
+    }
+
+    private fun toggleFiltersVisibility() {
+        if (filtersScrollView.visibility == View.GONE) {
+            filtersScrollView.visibility = View.VISIBLE
+        } else {
+            filtersScrollView.visibility = View.GONE
+        }
     }
 
     private fun requestStoragePermission() {

@@ -13,10 +13,10 @@
         android:layout_height="50dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="12dp"
         android:contentDescription="@string/close_button_description"
-        android:src="@drawable/close_24px" />
+        android:src="@drawable/close__1_" />
 
     <ImageView
         android:id="@+id/saveButton"
@@ -24,14 +24,33 @@
         android:layout_height="50dp"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="12dp"
         app:srcCompat="@drawable/file_download" />
+
+    <HorizontalScrollView
+        android:id="@+id/filtersScrollView"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:layout_above="@id/horizontalScrollView"
+        android:visibility="gone"
+        android:fillViewport="true"
+        android:scrollbars="horizontal">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="#202020"
+        android:orientation="horizontal">
+
+    </LinearLayout>
+</HorizontalScrollView>
+
 
     <HorizontalScrollView
         android:id="@+id/horizontalScrollView"
         android:layout_width="match_parent"
-        android:layout_height="70dp"
+        android:layout_height="55dp"
         android:layout_alignParentBottom="true"
         android:fillViewport="true"
         android:scrollbars="horizontal">
@@ -46,44 +65,45 @@
 
 
             <ImageButton
-                android:id="@+id/imageButton4"
-                android:layout_width="70dp"
-                android:layout_height="70dp"
-                android:backgroundTint="#000000"
-                app:srcCompat="@drawable/refreshh" />
+                android:id="@+id/photoRotationButton"
+                android:layout_width="90dp"
+                android:layout_height="55dp"
+                android:backgroundTint="#00000000"
+                app:srcCompat="@drawable/refresh" />
 
             <ImageButton
-                android:id="@+id/imageButton5"
-                android:layout_width="70dp"
-                android:layout_height="70dp"
-                android:backgroundTint="#000000"
-                app:srcCompat="@drawable/colours" />
+                android:id="@+id/filtersButton"
+                android:layout_width="85dp"
+                android:layout_height="55dp"
+                android:backgroundTint="#00000000"
+                app:srcCompat="@drawable/colours"
+                android:onClick="onFiltersButtonClicked" />
 
             <ImageButton
-                android:id="@+id/imageButton"
-                android:layout_width="70dp"
-                android:layout_height="70dp"
-                android:backgroundTint="#000000"
+                android:id="@+id/retouchButton"
+                android:layout_width="85dp"
+                android:layout_height="55dp"
+                android:backgroundTint="#00000000"
                 app:srcCompat="@drawable/retouch_1" />
 
             <ImageButton
-                android:id="@+id/imageButton2"
-                android:layout_width="70dp"
-                android:layout_height="70dp"
-                android:backgroundTint="#000000"
+                android:id="@+id/scallingButton"
+                android:layout_width="85dp"
+                android:layout_height="55dp"
+                android:backgroundTint="#00000000"
                 app:srcCompat="@drawable/zoom_in_1" />
 
             <ImageButton
-                android:id="@+id/imageButton3"
-                android:layout_width="70dp"
-                android:layout_height="70dp"
+                android:id="@+id/cubeButton"
+                android:layout_width="85dp"
+                android:layout_height="55dp"
                 android:backgroundTint="#000000"
                 app:srcCompat="@drawable/cube_1" />
 
             <ImageButton
-                android:id="@+id/imageButton6"
-                android:layout_width="70dp"
-                android:layout_height="70dp"
+                android:id="@+id/faceRecognitionButton"
+                android:layout_width="85dp"
+                android:layout_height="55dp"
                 android:backgroundTint="#000000"
                 app:srcCompat="@drawable/face_detection_1" />
         </LinearLayout>
@@ -95,7 +115,8 @@
         android:layout_height="match_parent"
         android:layout_above="@id/horizontalScrollView"
         android:layout_below="@id/closeButton"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginBottom="16dp"
         android:background="#000000"
         android:scaleType="centerInside" />
 
