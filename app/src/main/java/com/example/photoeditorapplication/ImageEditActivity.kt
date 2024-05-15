@@ -24,15 +24,12 @@ import kotlin.math.sin
 import kotlin.math.roundToInt
 
 class ImageEditActivity : AppCompatActivity() {
-
     private lateinit var imageView: ImageView
     private lateinit var originalBitmap: Bitmap
+    private lateinit var scaledBitmap: Bitmap
     private lateinit var filtersScrollView: HorizontalScrollView
     private lateinit var rotationSeekBar: SeekBar
-
-    companion object {
-        private const val REQUEST_STORAGE_PERMISSION_CODE = 101
-    }
+    private lateinit var scalingSeekBar: SeekBar
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,35 +38,60 @@ class ImageEditActivity : AppCompatActivity() {
         imageView = findViewById(R.id.selectedImageView)
         filtersScrollView = findViewById(R.id.filtersScrollView)
         rotationSeekBar = findViewById(R.id.rotationSeekBar)
-        rotationSeekBar.visibility = View.GONE
+        scalingSeekBar = findViewById(R.id.scalingSeekBar)
 
         val closeButton: ImageView = findViewById(R.id.closeButton)
         val saveButton: ImageView = findViewById(R.id.saveButton)
         val rotateButton: ImageView = findViewById(R.id.photoRotationButton)
-        val filtersButton: ImageView = findViewById(R.id.filtersButton)
-        val imageUri: Uri? = intent.getParcelableExtra("imageUri")
+        val scaleButton: ImageView = findViewById(R.id.scallingButton)  // Предполагаем, что кнопка масштабирования добавлена в XML
 
+        val imageUri: Uri? = intent.getParcelableExtra("imageUri")
         if (imageUri != null) {
             imageView.setImageURI(imageUri)
             imageView.drawable?.let {
                 originalBitmap = (it as BitmapDrawable).bitmap
+                scaledBitmap = originalBitmap.copy(Bitmap.Config.ARGB_8888, true)
             }
         }
 
         closeButton.setOnClickListener { finish() }
         saveButton.setOnClickListener { requestStoragePermission() }
-        rotateButton.setOnClickListener { toggleSeekBarVisibility() }
-        filtersButton.setOnClickListener { toggleFiltersVisibility() }
+        rotateButton.setOnClickListener { toggleSeekBarVisibility(rotationSeekBar) }
+        scaleButton.setOnClickListener { toggleSeekBarVisibility(scalingSeekBar) }
 
         rotationSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
-                val rotatedBitmap = rotateBitmap(originalBitmap, progress.toFloat())
+                val rotatedBitmap = rotateBitmap(scaledBitmap, progress.toFloat())
                 imageView.setImageBitmap(rotatedBitmap)
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar) { }
             override fun onStopTrackingTouch(seekBar: SeekBar) { }
         })
+
+        scalingSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
+                scaleImage(progress)
+            }
+            override fun onStartTrackingTouch(seekBar: SeekBar) {}
+            override fun onStopTrackingTouch(seekBar: SeekBar) {}
+        })
+    }
+    companion object {
+        private const val REQUEST_STORAGE_PERMISSION_CODE = 101
+    }
+    private fun scaleImage(scalePercent: Int) {
+        val newWidth = originalBitmap.width * scalePercent / 100
+        val newHeight = originalBitmap.height * scalePercent / 100
+        scaledBitmap = Bitmap.createBitmap(newWidth, newHeight, Bitmap.Config.ARGB_8888)
+        for (x in 0 until newWidth) {
+            for (y in 0 until newHeight) {
+                val srcX = (x * originalBitmap.width / newWidth).toInt()
+                val srcY = (y * originalBitmap.height / newHeight).toInt()
+                scaledBitmap.setPixel(x, y, originalBitmap.getPixel(srcX, srcY))
+            }
+        }
+        imageView.setImageBitmap(scaledBitmap)
     }
 
     private fun rotateBitmap(source: Bitmap, degrees: Float): Bitmap {
@@ -83,7 +105,6 @@ class ImageEditActivity : AppCompatActivity() {
         val newHeight = (srcWidth * kotlin.math.abs(sin) + srcHeight * kotlin.math.abs(cos)).roundToInt()
 
         val result = Bitmap.createBitmap(newWidth, newHeight, source.config)
-
         val centerX = srcWidth / 2
         val centerY = srcHeight / 2
         val newCenterX = newWidth / 2
@@ -93,7 +114,6 @@ class ImageEditActivity : AppCompatActivity() {
             for (y in 0 until newHeight) {
                 val deltaX = x - newCenterX
                 val deltaY = y - newCenterY
-
                 val originalX = (deltaX * cos + deltaY * sin + centerX).roundToInt()
                 val originalY = (-deltaX * sin + deltaY * cos + centerY).roundToInt()
 
@@ -107,28 +127,14 @@ class ImageEditActivity : AppCompatActivity() {
         return result
     }
 
-    private fun toggleFiltersVisibility() {
-        filtersScrollView.visibility = if (filtersScrollView.visibility == View.GONE) View.VISIBLE else View.GONE
-    }
-
-    private fun toggleSeekBarVisibility() {
-        rotationSeekBar.visibility = if (rotationSeekBar.visibility == View.GONE) {
-            updateImageViewLayout(true)
-            View.VISIBLE
+    private fun toggleSeekBarVisibility(seekBar: SeekBar) {
+        if (seekBar.visibility == View.GONE) {
+            rotationSeekBar.visibility = View.GONE
+            scalingSeekBar.visibility = View.GONE
+            seekBar.visibility = View.VISIBLE
         } else {
-            updateImageViewLayout(false)
-            View.GONE
+            seekBar.visibility = View.GONE
         }
-    }
-
-    private fun updateImageViewLayout(isSeekBarVisible: Boolean) {
-        val params = imageView.layoutParams as RelativeLayout.LayoutParams
-        if (isSeekBarVisible) {
-            params.addRule(RelativeLayout.ABOVE, R.id.rotationSeekBar)
-        } else {
-            params.addRule(RelativeLayout.ABOVE, R.id.toolsScrollView)
-        }
-        imageView.layoutParams = params
     }
 
     private fun requestStoragePermission() {

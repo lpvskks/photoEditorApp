@@ -28,15 +28,8 @@
         android:layout_marginEnd="12dp"
         app:srcCompat="@drawable/file_download" />
 
-    <SeekBar
-        android:id="@+id/rotationSeekBar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@id/toolsScrollView"
-        android:layout_marginBottom="10dp"
-        android:max="360"
-        android:progress="0"
-        android:visibility="gone" />
+
+
 
     <HorizontalScrollView
         android:id="@+id/filtersScrollView"
@@ -129,5 +122,25 @@
         android:layout_marginBottom="16dp"
         android:background="#000000"
         android:scaleType="centerInside" />
+    <SeekBar
+        android:id="@+id/rotationSeekBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/toolsScrollView"
+        android:layout_marginBottom="10dp"
+        android:max="360"
+        android:progress="0"
+        android:visibility="gone" />
+
+    <SeekBar
+        android:id="@+id/scalingSeekBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/toolsScrollView"
+        android:layout_marginBottom="10dp"
+        android:max="200"
+        android:min="10"
+        android:progress="100"
+        android:visibility="gone" />
 
 </RelativeLayout>
