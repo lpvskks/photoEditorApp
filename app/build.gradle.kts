@@ -36,7 +36,7 @@ android {
 }
 
 dependencies {
-
+    implementation ("com.quickbirdstudios:opencv-contrib:3.4.15")
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)

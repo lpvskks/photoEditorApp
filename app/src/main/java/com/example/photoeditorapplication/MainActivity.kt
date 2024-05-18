@@ -14,18 +14,25 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import android.graphics.Bitmap
+import android.util.Log
 import java.io.ByteArrayOutputStream
-
+import org.opencv.android.OpenCVLoader
 @Suppress("DEPRECATION")
 class MainActivity : AppCompatActivity() {
     private val GALLERY_REQUEST_CODE = 100
     private val PERMISSION_REQUEST_CODE = 101
     private val CAMERA_REQUEST_CODE = 102
     private val CAMERA_PERMISSION_CODE = 103
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        //OpenCVLoader.initDebug()
+
+        if (!OpenCVLoader.initDebug())
+            Log.e("OpenCV", "Unable to load OpenCV!");
+        else
+            Log.d("OpenCV", "OpenCV loaded Successfully!");
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), PERMISSION_REQUEST_CODE)
