@@ -1,6 +1,7 @@
 package com.example.photoeditorapplication
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.ContentValues
 import android.content.Context
 import android.content.pm.PackageManager
@@ -11,11 +12,11 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
-import android.util.Log
-import android.view.MotionEvent
 import android.view.View
 import android.widget.HorizontalScrollView
+import android.widget.ImageButton
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.SeekBar
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -38,14 +39,14 @@ import org.opencv.core.Scalar
 class ImageEditActivity : AppCompatActivity() {
     private lateinit var imageView: ImageView
     private lateinit var originalBitmap: Bitmap
+    private lateinit var filteredBitmap: Bitmap
     private lateinit var scaledBitmap: Bitmap
     private lateinit var filtersScrollView: HorizontalScrollView
     private lateinit var rotationSeekBar: SeekBar
     private lateinit var scalingSeekBar: SeekBar
-    private lateinit var brushSizeSeekBar: SeekBar
-    private lateinit var retouchStrengthSeekBar: SeekBar
-    private var brushSize: Int = 0
-    private var retouchStrength: Double = 0.0
+    private lateinit var filtersButton: ImageButton
+    private lateinit var filtersContainer: LinearLayout
+    @SuppressLint("SuspiciousIndentation")
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
@@ -55,14 +56,13 @@ class ImageEditActivity : AppCompatActivity() {
         filtersScrollView = findViewById(R.id.filtersScrollView)
         rotationSeekBar = findViewById(R.id.rotationSeekBar)
         scalingSeekBar = findViewById(R.id.scalingSeekBar)
-        retouchStrengthSeekBar = findViewById(R.id.retouchStrengthSeekBar)
-        brushSizeSeekBar = findViewById(R.id.brushSizeSeekBar)
+        filtersButton = findViewById(R.id.filtersButton)
+        filtersContainer = findViewById(R.id.filtersContainer)
 
         val closeButton: ImageView = findViewById(R.id.closeButton)
         val saveButton: ImageView = findViewById(R.id.saveButton)
         val rotateButton: ImageView = findViewById(R.id.photoRotationButton)
         val scaleButton: ImageView = findViewById(R.id.scallingButton)
-        val retouchButton: ImageView = findViewById(R.id.retouchButton)
 
         val imageUri: Uri? = intent.getParcelableExtra("imageUri")
             if (imageUri != null) {
@@ -73,31 +73,26 @@ class ImageEditActivity : AppCompatActivity() {
                 }
             }
 
-        val buttonFaceDetection: ImageView = findViewById(R.id.faceRecognitionButton)
-        buttonFaceDetection.setOnClickListener {
-            originalBitmap?.let { bitmap ->
-                val mat = Mat()
-                Utils.bitmapToMat(bitmap, mat)
-                val faceBitmap = faceDetection(mat, this) // Передаем this как context
-                val processedBitmap = Bitmap.createBitmap(
-                    faceBitmap.cols(),
-                    faceBitmap.rows(),
-                    Bitmap.Config.ARGB_8888
-                )
-                Utils.matToBitmap(faceBitmap, processedBitmap)
-                imageView.setImageBitmap(processedBitmap)
-                originalBitmap = processedBitmap
-            } ?: Toast.makeText(this, "Нет изображения для обработки", Toast.LENGTH_SHORT).show()
+        filtersButton.setOnClickListener {
+            toggleFiltersVisibility()
+        }
+
+        findViewById<ImageButton>(R.id.filter1Button).setOnClickListener {
+            applyRedFilter()
+        }
+
+        findViewById<ImageButton>(R.id.filter2Button).setOnClickListener {
+            applyNegativeFilter()
+        }
+
+        findViewById<ImageButton>(R.id.filter3Button).setOnClickListener {
+            applyMonochromeFilter()
         }
 
         closeButton.setOnClickListener { finish() }
         saveButton.setOnClickListener { requestStoragePermission() }
         rotateButton.setOnClickListener { toggleSeekBarVisibility(rotationSeekBar) }
         scaleButton.setOnClickListener { toggleSeekBarVisibility(scalingSeekBar) }
-        retouchButton.setOnClickListener {
-            toggleSeekBarVisibility(retouchStrengthSeekBar)
-            toggleSeekBarVisibility(brushSizeSeekBar)
-        }
 
         rotationSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
@@ -117,75 +112,122 @@ class ImageEditActivity : AppCompatActivity() {
             override fun onStopTrackingTouch(seekBar: SeekBar) {}
         })
 
-        brushSizeSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                brushSize = progress
-            }
-
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
-            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
-        })
-
-        retouchStrengthSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                retouchStrength = progress.toDouble() / 100
-            }
-
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
-            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
-        })
-
-        imageView.setOnTouchListener { _, event ->
-            when (event.action) {
-                MotionEvent.ACTION_DOWN, MotionEvent.ACTION_MOVE -> {
-                    applyRetouch(event.x.toInt(), event.y.toInt())
-                }
-            }
-            true
-        }
-
-    }
-    private fun applyRetouch(x: Int, y: Int) {
-        val centerX = x
-        val centerY = y
-        val radius = brushSize / 2
-
-        for (i in -radius..radius) {
-            for (j in -radius..radius) {
-                val pixelX = centerX + i
-                val pixelY = centerY + j
-                if (pixelX in 0 until scaledBitmap.width && pixelY in 0 until scaledBitmap.height) {
-                    val distance = Math.sqrt((i * i + j * j).toDouble())
-                    if (distance <= radius) {
-                        val strength = (1 - distance / radius) * retouchStrength
-                        applyRetouchToPixel(pixelX, pixelY, strength)
-                    }
-                }
+        val buttonFaceDetection: ImageView = findViewById(R.id.faceRecognitionButton)
+        buttonFaceDetection.setOnClickListener {
+            originalBitmap.let { bitmap ->
+                val mat = Mat()
+                Utils.bitmapToMat(bitmap, mat)
+                val faceBitmap = faceDetection(mat, this)
+                val processedBitmap = Bitmap.createBitmap(
+                    faceBitmap.cols(),
+                    faceBitmap.rows(),
+                    Bitmap.Config.ARGB_8888
+                )
+                Utils.matToBitmap(faceBitmap, processedBitmap)
+                imageView.setImageBitmap(processedBitmap)
+                originalBitmap = processedBitmap
             }
         }
 
-        imageView.setImageBitmap(scaledBitmap)
     }
-
-    private fun applyRetouchToPixel(x: Int, y: Int, strength: Double) {
-        val pixel = scaledBitmap.getPixel(x, y)
-        val red = Color.red(pixel)
-        val green = Color.green(pixel)
-        val blue = Color.blue(pixel)
-
-        val newRed = (red + (255 - red) * strength * retouchStrength).toInt().coerceIn(0..255)
-        val newGreen = (green + (255 - green) * strength * retouchStrength).toInt().coerceIn(0..255)
-        val newBlue = (blue + (255 - blue) * strength * retouchStrength).toInt().coerceIn(0..255)
-
-        val newPixel = Color.rgb(newRed, newGreen, newBlue)
-        scaledBitmap.setPixel(x, y, newPixel)
+    private fun toggleSeekBarVisibility(seekBar: SeekBar) {
+        if (seekBar.visibility == View.GONE) {
+            rotationSeekBar.visibility = View.GONE
+            scalingSeekBar.visibility = View.GONE
+            seekBar.visibility = View.VISIBLE
+        } else {
+            seekBar.visibility = View.GONE
+        }
     }
-
-
-
+    private fun toggleFiltersVisibility() {
+        filtersContainer.visibility = if (filtersContainer.visibility == View.VISIBLE) {
+            View.GONE
+        } else {
+            View.VISIBLE
+        }
+    }
     companion object {
         private const val REQUEST_STORAGE_PERMISSION_CODE = 101
     }
+    private fun applyNegativeFilter() {
+        filteredBitmap = applyNegativeFilter(originalBitmap)
+        imageView.setImageBitmap(filteredBitmap)
+    }
+
+    private fun applyNegativeFilter(source: Bitmap): Bitmap {
+        val width = source.width
+        val height = source.height
+        val pixels = IntArray(width * height)
+
+        source.getPixels(pixels, 0, width, 0, 0, width, height)
+
+        for (i in pixels.indices) {
+            val pixel = pixels[i]
+            val red = 255 - Color.red(pixel)
+            val green = 255 - Color.green(pixel)
+            val blue = 255 - Color.blue(pixel)
+            pixels[i] = Color.rgb(red, green, blue)
+        }
+
+        val result = Bitmap.createBitmap(width, height, source.config)
+        result.setPixels(pixels, 0, width, 0, 0, width, height)
+
+        return result
+    }
+
+    private fun applyRedFilter() {
+        filteredBitmap = applyRedFilter(originalBitmap, Color.RED)
+        imageView.setImageBitmap(filteredBitmap)
+    }
+
+    private fun applyRedFilter(source: Bitmap, color: Int): Bitmap {
+        val width = source.width
+        val height = source.height
+        val pixels = IntArray(width * height)
+
+        source.getPixels(pixels, 0, width, 0, 0, width, height)
+
+        for (i in pixels.indices) {
+            val pixel = pixels[i]
+            val red = Color.red(color)
+            val green = Color.green(pixel)
+            val blue = Color.blue(pixel)
+            pixels[i] = Color.rgb(red, green, blue)
+        }
+
+        val result = Bitmap.createBitmap(width, height, source.config)
+        result.setPixels(pixels, 0, width, 0, 0, width, height)
+
+        return result
+    }
+
+    private fun applyMonochromeFilter() {
+        filteredBitmap = applyMonochromeFilter(originalBitmap)
+        imageView.setImageBitmap(filteredBitmap)
+    }
+
+    private fun applyMonochromeFilter(source: Bitmap): Bitmap {
+        val width = source.width
+        val height = source.height
+        val pixels = IntArray(width * height)
+
+        source.getPixels(pixels, 0, width, 0, 0, width, height)
+
+        for (i in pixels.indices) {
+            val pixel = pixels[i]
+            val red = Color.red(pixel)
+            val green = Color.green(pixel)
+            val blue = Color.blue(pixel)
+            val luminance = (red * 0.299 + green * 0.587 + blue * 0.114).toInt()
+            pixels[i] = Color.rgb(luminance, luminance, luminance)
+        }
+
+        val result = Bitmap.createBitmap(width, height, source.config)
+        result.setPixels(pixels, 0, width, 0, 0, width, height)
+
+        return result
+    }
+
     private fun scaleImage(scalePercent: Int) {
         val newWidth = originalBitmap.width * scalePercent / 100
         val newHeight = originalBitmap.height * scalePercent / 100
@@ -231,16 +273,6 @@ class ImageEditActivity : AppCompatActivity() {
         }
 
         return result
-    }
-
-    private fun toggleSeekBarVisibility(seekBar: SeekBar) {
-        if (seekBar.visibility == View.GONE) {
-            rotationSeekBar.visibility = View.GONE
-            scalingSeekBar.visibility = View.GONE
-            seekBar.visibility = View.VISIBLE
-        } else {
-            seekBar.visibility = View.GONE
-        }
     }
 
     private fun requestStoragePermission() {
@@ -302,5 +334,4 @@ class ImageEditActivity : AppCompatActivity() {
 
         return input
     }
-
 }

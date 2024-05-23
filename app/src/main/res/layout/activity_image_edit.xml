@@ -44,10 +44,10 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:background="#202020"
-        android:orientation="horizontal">
+            android:orientation="horizontal">
 
-    </LinearLayout>
-</HorizontalScrollView>
+        </LinearLayout>
+    </HorizontalScrollView>
 
 
     <HorizontalScrollView
@@ -169,5 +169,63 @@
             android:visibility="gone" />
 
     </LinearLayout>
+
+    <HorizontalScrollView
+        android:id="@+id/scrollViewContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#000000">
+
+        <LinearLayout
+            android:id="@+id/filtersContainer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <ImageButton
+                android:id="@+id/filter1Button"
+                android:layout_width="85dp"
+                android:layout_height="55dp"
+                android:backgroundTint="#00000000"
+                app:srcCompat="@drawable/filter1" />
+
+            <ImageButton
+                android:id="@+id/filter2Button"
+                android:layout_width="85dp"
+                android:layout_height="55dp"
+                android:backgroundTint="#00000000"
+                app:srcCompat="@drawable/filter2" />
+
+            <ImageButton
+                android:id="@+id/filter3Button"
+                android:layout_width="85dp"
+                android:layout_height="55dp"
+                android:backgroundTint="#00000000"
+                app:srcCompat="@drawable/filter3" />
+
+            <ImageButton
+                android:id="@+id/filter4Button"
+                android:layout_width="85dp"
+                android:layout_height="55dp"
+                android:backgroundTint="#00000000"
+                app:srcCompat="@drawable/filter4" />
+
+            <ImageButton
+                android:id="@+id/filter5Button"
+                android:layout_width="85dp"
+                android:layout_height="55dp"
+                android:backgroundTint="#00000000"
+                app:srcCompat="@drawable/filter5" />
+
+            <ImageButton
+                android:id="@+id/filter6Button"
+                android:layout_width="85dp"
+                android:layout_height="55dp"
+                android:backgroundTint="#00000000"
+                app:srcCompat="@drawable/filter6" />
+        </LinearLayout>
+    </HorizontalScrollView>
+
 
 </RelativeLayout>
