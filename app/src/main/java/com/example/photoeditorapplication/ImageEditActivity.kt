@@ -36,6 +36,11 @@ import java.io.OutputStream
 import java.io.FileOutputStream
 import org.opencv.imgproc.Imgproc
 import org.opencv.core.Scalar
+import java.util.Random
+import kotlin.math.atan2
+import kotlin.math.sqrt
+import kotlin.math.abs
+
 class ImageEditActivity : AppCompatActivity() {
     private lateinit var imageView: ImageView
     private lateinit var originalBitmap: Bitmap
@@ -89,11 +94,22 @@ class ImageEditActivity : AppCompatActivity() {
             applyMonochromeFilter()
         }
 
+
         findViewById<ImageButton>(R.id.filter4Button).setOnClickListener {
-            applyHighContrastFilter()
+            applyNoiseBlurFilter()
         }
 
+        findViewById<ImageButton>(R.id.filter5Button).setOnClickListener {
+            applyFishEyeEffect()
+        }
 
+        findViewById<ImageButton>(R.id.filter6Button).setOnClickListener {
+            applySepiaToneEffect()
+        }
+
+        findViewById<ImageButton>(R.id.filter7Button).setOnClickListener {
+            applyHighContrastFilter()
+        }
 
         closeButton.setOnClickListener { finish() }
         saveButton.setOnClickListener { requestStoragePermission() }
@@ -182,11 +198,11 @@ class ImageEditActivity : AppCompatActivity() {
     }
 
     private fun applyRedFilter() {
-        filteredBitmap = applyRedFilter(originalBitmap, Color.RED)
+        filteredBitmap = Color.RED.applyRedFilter(originalBitmap)
         imageView.setImageBitmap(filteredBitmap)
     }
 
-    private fun applyRedFilter(source: Bitmap, color: Int): Bitmap {
+    private fun Int.applyRedFilter(source: Bitmap): Bitmap {
         val width = source.width
         val height = source.height
         val pixels = IntArray(width * height)
@@ -195,7 +211,7 @@ class ImageEditActivity : AppCompatActivity() {
 
         for (i in pixels.indices) {
             val pixel = pixels[i]
-            val red = Color.red(color)
+            val red = Color.red(this)
             val green = Color.green(pixel)
             val blue = Color.blue(pixel)
             pixels[i] = Color.rgb(red, green, blue)
@@ -311,18 +327,131 @@ class ImageEditActivity : AppCompatActivity() {
         return Math.max(0, Math.min(255, n.toInt()))
     }
 
+    private fun applyNoiseBlurFilter() {
+        filteredBitmap = applyNoiseBlurFilter(originalBitmap, 70f)
+        imageView.setImageBitmap(filteredBitmap)
+    }
+    private fun applyNoiseBlurFilter(source: Bitmap, magnitude: Float): Bitmap {
+        val width = source.width
+        val height = source.height
+        val noisyBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+        val random = Random()
+
+        for (x in 0 until width) {
+            for (y in 0 until height) {
+                val offset = random.nextFloat() * magnitude
+                val newX = (x + offset).toInt().coerceIn(0, width - 1)
+                val newY = (y + offset).toInt().coerceIn(0, height - 1)
+                val pixel = source.getPixel(newX, newY)
+                noisyBitmap.setPixel(x, y, pixel)
+            }
+        }
+
+        return noisyBitmap
+    }
+
+    private fun applyFishEyeEffect() {
+        filteredBitmap = applyFishEyeEffect(originalBitmap, 300, 400, 500, 500)
+        imageView.setImageBitmap(filteredBitmap)
+    }
+
+    private fun applyFishEyeEffect(source: Bitmap, startX: Int, startY: Int, width: Int, height: Int): Bitmap {
+        val fishEyeBitmap = source.copy(source.config, true)
+
+        val centerX = (startX + width / 2.0f)
+        val centerY = (startY + height / 2.0f)
+        val radius = Math.min(width / 2.0f, height / 2.0f)
+
+        for (x in startX until startX + width) {
+            for (y in startY until startY + height) {
+                val dx = x - centerX
+                val dy = y - centerY
+                val dist = sqrt((dx * dx + dy * dy).toDouble())
+                if (dist < radius) {
+                    val angle = atan2(dy.toDouble(), dx.toDouble())
+                    val r = (Math.sqrt(radius * radius - dist * dist) / radius).toFloat()
+                    val newX = (centerX + r * dist * Math.cos(angle)).toInt()
+                    val newY = (centerY + r * dist * Math.sin(angle)).toInt()
+
+                    if (newX in startX until startX + width && newY in startY until startY + height) {
+                        val newPixel = source.getPixel(newX, newY)
+                        fishEyeBitmap.setPixel(x, y, newPixel)
+                    }
+                }
+            }
+        }
+
+        return fishEyeBitmap
+    }
+
+    private fun applySepiaToneEffect() {
+        filteredBitmap = applySepiaToneEffect(originalBitmap)
+        imageView.setImageBitmap(filteredBitmap)
+    }
+    private fun applySepiaToneEffect(source: Bitmap) : Bitmap {
+        val sepiaBitmap = source.copy(source.config, true)
+
+        val sepiaDepth = 20
+
+        for (x in 0 until source.width) {
+            for (y in 0 until source.height) {
+                val pixel = source.getPixel(x, y)
+                val r = Color.red(pixel)
+                val g = Color.green(pixel)
+                val b = Color.blue(pixel)
+
+                val outputR = (r * 0.393 + g * 0.769 + b * 0.189).toInt()
+                val outputG = (r * 0.349 + g * 0.686 + b * 0.168).toInt()
+                val outputB = (r * 0.272 + g * 0.534 + b * 0.131).toInt()
+
+                sepiaBitmap.setPixel(x, y, Color.rgb(
+                    if (outputR > 255) 255 else outputR,
+                    if (outputG > 255) 255 else outputG,
+                    if (outputB > 255) 255 else outputB
+                ))
+            }
+        }
+
+        return sepiaBitmap
+    }
+
     private fun scaleImage(scalePercent: Int) {
         val newWidth = originalBitmap.width * scalePercent / 100
         val newHeight = originalBitmap.height * scalePercent / 100
         scaledBitmap = Bitmap.createBitmap(newWidth, newHeight, Bitmap.Config.ARGB_8888)
         for (x in 0 until newWidth) {
             for (y in 0 until newHeight) {
-                val srcX = (x * originalBitmap.width / newWidth).toInt()
-                val srcY = (y * originalBitmap.height / newHeight).toInt()
+                val srcX = (x * originalBitmap.width / newWidth)
+                val srcY = (y * originalBitmap.height / newHeight)
                 scaledBitmap.setPixel(x, y, originalBitmap.getPixel(srcX, srcY))
             }
         }
         imageView.setImageBitmap(scaledBitmap)
+    }
+    fun retouchImage(originalBitmap: Bitmap, brushSize: Int, retouchCoefficient: Double, centerBrush: Boolean): Bitmap {
+        val retouchedBitmap = originalBitmap.copy(Bitmap.Config.ARGB_8888, true)
+        val centerX = originalBitmap.width / 2
+        val centerY = originalBitmap.height / 2
+
+        for (x in 0 until originalBitmap.width) {
+            for (y in 0 until originalBitmap.height) {
+                if (centerBrush && Math.sqrt(((x - centerX)*(x - centerX) + (y - centerY)*(y - centerY)).toDouble()) > brushSize) {
+                    continue // Пропускаем пиксели, находящиеся за пределами круглой кисти
+                }
+                val pixelColor = originalBitmap.getPixel(x, y)
+                val red = Color.red(pixelColor)
+                val green = Color.green(pixelColor)
+                val blue = Color.blue(pixelColor)
+                val alpha = Color.alpha(pixelColor)
+
+                // Применяем эффект ретуши к пикселю
+                val newRed = (red * retouchCoefficient).coerceIn(0.0, 255.0).toInt()
+                val newGreen = (green * retouchCoefficient).coerceIn(0.0, 255.0).toInt()
+                val newBlue = (blue * retouchCoefficient).coerceIn(0.0, 255.0).toInt()
+                retouchedBitmap.setPixel(x, y, Color.argb(alpha, newRed, newGreen, newBlue))
+            }
+        }
+        return retouchedBitmap
     }
 
     private fun rotateBitmap(source: Bitmap, degrees: Float): Bitmap {
@@ -332,8 +461,8 @@ class ImageEditActivity : AppCompatActivity() {
 
         val srcWidth = source.width
         val srcHeight = source.height
-        val newWidth = (srcWidth * kotlin.math.abs(cos) + srcHeight * kotlin.math.abs(sin)).roundToInt()
-        val newHeight = (srcWidth * kotlin.math.abs(sin) + srcHeight * kotlin.math.abs(cos)).roundToInt()
+        val newWidth = (srcWidth * abs(cos) + srcHeight * abs(sin)).roundToInt()
+        val newHeight = (srcWidth * abs(sin) + srcHeight * abs(cos)).roundToInt()
 
         val result = Bitmap.createBitmap(newWidth, newHeight, source.config)
         val centerX = srcWidth / 2
@@ -387,7 +516,7 @@ class ImageEditActivity : AppCompatActivity() {
         }
     }
 
-    fun faceDetection(input: Mat, context: Context): Mat {
+    private fun faceDetection(input: Mat, context: Context): Mat {
         val cascadeFile =
             File(context.getExternalFilesDir(null), "haarcascade_frontalface_alt2.xml")
         if (!cascadeFile.exists()) {

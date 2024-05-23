@@ -224,6 +224,14 @@
                 android:layout_height="55dp"
                 android:backgroundTint="#00000000"
                 app:srcCompat="@drawable/filter6" />
+
+            <ImageButton
+                android:id="@+id/filter7Button"
+                android:layout_width="85dp"
+                android:layout_height="55dp"
+                android:backgroundTint="#00000000"
+                app:srcCompat="@drawable/filter6" />
+
         </LinearLayout>
     </HorizontalScrollView>
 
