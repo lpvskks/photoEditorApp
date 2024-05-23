@@ -89,6 +89,12 @@ class ImageEditActivity : AppCompatActivity() {
             applyMonochromeFilter()
         }
 
+        findViewById<ImageButton>(R.id.filter4Button).setOnClickListener {
+            applyHighContrastFilter()
+        }
+
+
+
         closeButton.setOnClickListener { finish() }
         saveButton.setOnClickListener { requestStoragePermission() }
         rotateButton.setOnClickListener { toggleSeekBarVisibility(rotationSeekBar) }
@@ -226,6 +232,83 @@ class ImageEditActivity : AppCompatActivity() {
         result.setPixels(pixels, 0, width, 0, 0, width, height)
 
         return result
+    }
+
+    private fun applyHighContrastFilter() {
+        filteredBitmap = applyHighContrastFilter(originalBitmap)
+        imageView.setImageBitmap(filteredBitmap)
+    }
+
+    private fun applyHighContrastFilter(source: Bitmap): Bitmap {
+        val width = source.width
+        val height = source.height
+        val pixels = Array(width) { IntArray(height) }
+
+        for (x in 0 until width) {
+            for (y in 0 until height) {
+                pixels[x][y] = source.getPixel(x, y)
+            }
+        }
+
+        val newPixels = Array(width) { IntArray(height) }
+        for (x in 0 until width) {
+            for (y in 0 until height) {
+                val neighbors = getNeighbors(pixels, x, y)
+                var totalR = 0.0
+                var totalG = 0.0
+                var totalB = 0.0
+
+                for (pixel in neighbors) {
+                    val currentR = Color.red(pixel).toDouble()
+                    val currentG = Color.green(pixel).toDouble()
+                    val currentB = Color.blue(pixel).toDouble()
+                    for (otherPixel in neighbors) {
+                        val otherR = Color.red(otherPixel).toDouble()
+                        val otherG = Color.green(otherPixel).toDouble()
+                        val otherB = Color.blue(otherPixel).toDouble()
+
+                        totalR += Math.abs(otherR - currentR)
+                        totalG += Math.abs(otherG - currentG)
+                        totalB += Math.abs(otherB - currentB)
+                    }
+                }
+
+                val n = neighbors.size
+                totalR /= (n * n)
+                totalG /= (n * n)
+                totalB /= (n * n)
+
+                newPixels[x][y] = Color.rgb(settle(totalR), settle(totalG), settle(totalB))
+            }
+        }
+
+        val result = Bitmap.createBitmap(width, height, source.config)
+        for (x in 0 until width) {
+            for (y in 0 until height) {
+                result.setPixel(x, y, newPixels[x][y])
+            }
+        }
+
+        return result
+    }
+
+
+    private fun getNeighbors(pixels: Array<IntArray>, x: Int, y: Int): List<Int> {
+        val neighbors = mutableListOf<Int>()
+        for (dx in -1..1) {
+            for (dy in -1..1) {
+                val nx = x + dx
+                val ny = y + dy
+                if (nx in 0 until pixels.size && ny in 0 until pixels[0].size) {
+                    neighbors.add(pixels[nx][ny])
+                }
+            }
+        }
+        return neighbors
+    }
+
+    private fun settle(n: Double): Int {
+        return Math.max(0, Math.min(255, n.toInt()))
     }
 
     private fun scaleImage(scalePercent: Int) {
