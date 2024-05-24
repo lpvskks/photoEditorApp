@@ -437,42 +437,62 @@ class ImageEditActivity : AppCompatActivity() {
     private fun scaleImage(scalePercent: Int) {
         val newWidth = originalBitmap.width * scalePercent / 100
         val newHeight = originalBitmap.height * scalePercent / 100
-        scaledBitmap = Bitmap.createBitmap(newWidth, newHeight, Bitmap.Config.ARGB_8888)
+        val scaledBitmap = Bitmap.createBitmap(newWidth, newHeight, Bitmap.Config.ARGB_8888)
+
         for (x in 0 until newWidth) {
             for (y in 0 until newHeight) {
-                val srcX = (x * originalBitmap.width / newWidth)
-                val srcY = (y * originalBitmap.height / newHeight)
-                scaledBitmap.setPixel(x, y, originalBitmap.getPixel(srcX, srcY))
+                val srcX = x.toFloat() / newWidth * (originalBitmap.width - 1)
+                val srcY = y.toFloat() / newHeight * (originalBitmap.height - 1)
+                val x0 = srcX.toInt()
+                val y0 = srcY.toInt()
+                val x1 = Math.min(x0 + 1, originalBitmap.width - 1)
+                val y1 = Math.min(y0 + 1, originalBitmap.height - 1)
+
+                val p00 = originalBitmap.getPixel(x0, y0)
+                val p01 = originalBitmap.getPixel(x0, y1)
+                val p10 = originalBitmap.getPixel(x1, y0)
+                val p11 = originalBitmap.getPixel(x1, y1)
+
+                val a = srcX - x0
+                val b = srcY - y0
+
+                val color = interpolateColors(p00, p01, p10, p11, a, b)
+
+                scaledBitmap.setPixel(x, y, color)
             }
         }
+
         imageView.setImageBitmap(scaledBitmap)
     }
-    fun retouchImage(originalBitmap: Bitmap, brushSize: Int, retouchCoefficient: Double, centerBrush: Boolean): Bitmap {
-        val retouchedBitmap = originalBitmap.copy(Bitmap.Config.ARGB_8888, true)
-        val centerX = originalBitmap.width / 2
-        val centerY = originalBitmap.height / 2
 
-        for (x in 0 until originalBitmap.width) {
-            for (y in 0 until originalBitmap.height) {
-                if (centerBrush && Math.sqrt(((x - centerX)*(x - centerX) + (y - centerY)*(y - centerY)).toDouble()) > brushSize) {
-                    continue // Пропускаем пиксели, находящиеся за пределами круглой кисти
-                }
-                val pixelColor = originalBitmap.getPixel(x, y)
-                val red = Color.red(pixelColor)
-                val green = Color.green(pixelColor)
-                val blue = Color.blue(pixelColor)
-                val alpha = Color.alpha(pixelColor)
+    private fun interpolateColors(p00: Int, p01: Int, p10: Int, p11: Int, a: Float, b: Float): Int {
+        val red = (1 - a) * (1 - b) * (p00.red()) +
+                a * (1 - b) * (p10.red()) +
+                (1 - a) * b * (p01.red()) +
+                a * b * (p11.red())
 
-                // Применяем эффект ретуши к пикселю
-                val newRed = (red * retouchCoefficient).coerceIn(0.0, 255.0).toInt()
-                val newGreen = (green * retouchCoefficient).coerceIn(0.0, 255.0).toInt()
-                val newBlue = (blue * retouchCoefficient).coerceIn(0.0, 255.0).toInt()
-                retouchedBitmap.setPixel(x, y, Color.argb(alpha, newRed, newGreen, newBlue))
-            }
-        }
-        return retouchedBitmap
+        val green = (1 - a) * (1 - b) * (p00.green()) +
+                a * (1 - b) * (p10.green()) +
+                (1 - a) * b * (p01.green()) +
+                a * b * (p11.green())
+
+        val blue = (1 - a) * (1 - b) * (p00.blue()) +
+                a * (1 - b) * (p10.blue()) +
+                (1 - a) * b * (p01.blue()) +
+                a * b * (p11.blue())
+
+        val alpha = (1 - a) * (1 - b) * (p00.alpha()) +
+                a * (1 - b) * (p10.alpha()) +
+                (1 - a) * b * (p01.alpha()) +
+                a * b * (p11.alpha())
+
+        return Color.argb(alpha.toInt(), red.toInt(), green.toInt(), blue.toInt())
     }
 
+    private fun Int.red() = (this shr 16) and 0xFF
+    private fun Int.green() = (this shr 8) and 0xFF
+    private fun Int.blue() = this and 0xFF
+    private fun Int.alpha() = (this shr 24) and 0xFF
     private fun rotateBitmap(source: Bitmap, degrees: Float): Bitmap {
         val radians = Math.toRadians(degrees.toDouble())
         val cos = cos(radians)
