@@ -29,27 +29,6 @@
         app:srcCompat="@drawable/file_download" />
 
 
-
-
-    <HorizontalScrollView
-        android:id="@+id/filtersScrollView"
-        android:layout_width="match_parent"
-        android:layout_height="80dp"
-        android:layout_above="@id/toolsScrollView"
-        android:visibility="gone"
-        android:fillViewport="true"
-        android:scrollbars="horizontal">
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:background="#202020"
-            android:orientation="horizontal">
-
-        </LinearLayout>
-    </HorizontalScrollView>
-
-
     <HorizontalScrollView
         android:id="@+id/toolsScrollView"
         android:layout_width="match_parent"
@@ -171,7 +150,7 @@
     </LinearLayout>
 
     <HorizontalScrollView
-        android:id="@+id/scrollFiltersViewContainer"
+        android:id="@+id/filtersScrollView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="#000000">

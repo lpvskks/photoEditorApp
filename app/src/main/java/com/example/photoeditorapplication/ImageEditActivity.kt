@@ -57,6 +57,9 @@ class ImageEditActivity : AppCompatActivity() {
     private lateinit var retouchButton: ImageButton
     private lateinit var cubeButton: ImageButton
 
+    private var rotationSeekBarVisible = false
+    private var scalingSeekBarVisible = false
+    private var filtersVisible = false
     @SuppressLint("SuspiciousIndentation")
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -64,7 +67,6 @@ class ImageEditActivity : AppCompatActivity() {
         setContentView(R.layout.activity_image_edit)
 
         imageView = findViewById(R.id.selectedImageView)
-        filtersScrollView = findViewById(R.id.filtersScrollView)
         filtersScrollView = findViewById(R.id.filtersScrollView)
         rotationSeekBar = findViewById(R.id.rotationSeekBar)
         scalingSeekBar = findViewById(R.id.scalingSeekBar)
@@ -89,13 +91,21 @@ class ImageEditActivity : AppCompatActivity() {
                 }
             }
 
+        rotationSeekBar.visibility = View.GONE
+        scalingSeekBar.visibility = View.GONE
+
+
         cubeButton.setOnClickListener {
             //canvasView.rotateCube()
         }
 
         filtersButton.setOnClickListener {
-            toggleFiltersVisibility()
+            filtersVisible = !filtersVisible
+            rotationSeekBarVisible = false
+            scalingSeekBarVisible = false
+            updateUIVisibility()
         }
+
 
         findViewById<ImageButton>(R.id.filter1Button).setOnClickListener {
             applyRedFilter()
@@ -126,15 +136,23 @@ class ImageEditActivity : AppCompatActivity() {
             applyHighContrastFilter()
         }
 
-        retouchButton.setOnClickListener {
-            toggleSeekBarVisibility(brushSizeSeekBar)
-            toggleSeekBarVisibility(retouchStrengthSeekBar)
+        rotateButton.setOnClickListener {
+            rotationSeekBarVisible = !rotationSeekBarVisible
+            scalingSeekBarVisible = false
+            filtersVisible = false
+            updateUIVisibility()
+        }
+
+        scaleButton.setOnClickListener {
+            scalingSeekBarVisible = !scalingSeekBarVisible
+            rotationSeekBarVisible = false
+            filtersVisible = false
+            updateUIVisibility()
         }
 
         closeButton.setOnClickListener { finish() }
         saveButton.setOnClickListener { requestStoragePermission() }
-        rotateButton.setOnClickListener { toggleSeekBarVisibility(rotationSeekBar) }
-        scaleButton.setOnClickListener { toggleSeekBarVisibility(scalingSeekBar) }
+
 
         rotationSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
@@ -154,8 +172,15 @@ class ImageEditActivity : AppCompatActivity() {
             override fun onStopTrackingTouch(seekBar: SeekBar) {}
         })
 
+
+
         val buttonFaceDetection: ImageView = findViewById(R.id.faceRecognitionButton)
         buttonFaceDetection.setOnClickListener {
+            rotationSeekBarVisible = false
+            scalingSeekBarVisible = false
+            filtersVisible = false
+            updateUIVisibility()
+
             originalBitmap.let { bitmap ->
                 val mat = Mat()
                 Utils.bitmapToMat(bitmap, mat)
@@ -171,22 +196,12 @@ class ImageEditActivity : AppCompatActivity() {
             }
         }
     }
-    private fun toggleSeekBarVisibility(seekBar: SeekBar) {
-        if (seekBar.visibility == View.GONE) {
-            rotationSeekBar.visibility = View.GONE
-            scalingSeekBar.visibility = View.GONE
-            seekBar.visibility = View.VISIBLE
-        } else {
-            seekBar.visibility = View.GONE
-        }
+    private fun updateUIVisibility() {
+        rotationSeekBar.visibility = if (rotationSeekBarVisible) View.VISIBLE else View.GONE
+        scalingSeekBar.visibility = if (scalingSeekBarVisible) View.VISIBLE else View.GONE
+        filtersContainer.visibility = if (filtersVisible) View.VISIBLE else View.GONE
     }
-    private fun toggleFiltersVisibility() {
-        filtersContainer.visibility = if (filtersContainer.visibility == View.VISIBLE) {
-            View.GONE
-        } else {
-            View.VISIBLE
-        }
-    }
+
     companion object {
         private const val REQUEST_STORAGE_PERMISSION_CODE = 101
     }
