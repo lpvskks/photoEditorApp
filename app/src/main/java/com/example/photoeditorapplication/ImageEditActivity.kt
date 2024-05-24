@@ -140,7 +140,7 @@ class ImageEditActivity : AppCompatActivity() {
         })
 
 
-    rotationSeekBar.visibility = View.GONE
+        rotationSeekBar.visibility = View.GONE
         scalingSeekBar.visibility = View.GONE
 
         filtersButton.setOnClickListener {

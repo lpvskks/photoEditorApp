@@ -108,8 +108,10 @@
         android:id="@+id/selectedImageView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/filtersScrollView"
+        android:layout_above="@id/toolsScrollView"
         android:layout_below="@id/closeButton"
+        android:layout_marginTop="2dp"
+        android:layout_marginBottom="16dp"
         android:background="#000000"
         android:scaleType="centerInside" />
 
@@ -135,12 +137,11 @@
         android:visibility="gone" />
 
     <LinearLayout
-        android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:orientation="vertical"
         android:layout_above="@id/toolsScrollView"
-        android:layout_marginBottom="10dp"
-        android:orientation="vertical">
+        android:layout_marginBottom="10dp">
 
         <SeekBar
             android:id="@+id/brushSizeSeekBar"
@@ -165,8 +166,7 @@
     <HorizontalScrollView
         android:id="@+id/filtersScrollView"
         android:layout_width="match_parent"
-        android:layout_height="64dp"
-        android:layout_above="@+id/linearLayout"
+        android:layout_height="wrap_content"
         android:background="#000000">
 
         <LinearLayout
