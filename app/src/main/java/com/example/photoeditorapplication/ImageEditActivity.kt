@@ -45,12 +45,18 @@ class ImageEditActivity : AppCompatActivity() {
     private lateinit var imageView: ImageView
     private lateinit var originalBitmap: Bitmap
     private lateinit var filteredBitmap: Bitmap
+    private lateinit var retouchBitmap: Bitmap
     private lateinit var scaledBitmap: Bitmap
     private lateinit var filtersScrollView: HorizontalScrollView
     private lateinit var rotationSeekBar: SeekBar
     private lateinit var scalingSeekBar: SeekBar
     private lateinit var filtersButton: ImageButton
     private lateinit var filtersContainer: LinearLayout
+    private lateinit var brushSizeSeekBar: SeekBar
+    private lateinit var retouchStrengthSeekBar: SeekBar
+    private lateinit var retouchButton: ImageButton
+    private lateinit var cubeButton: ImageButton
+
     @SuppressLint("SuspiciousIndentation")
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -59,10 +65,15 @@ class ImageEditActivity : AppCompatActivity() {
 
         imageView = findViewById(R.id.selectedImageView)
         filtersScrollView = findViewById(R.id.filtersScrollView)
+        filtersScrollView = findViewById(R.id.filtersScrollView)
         rotationSeekBar = findViewById(R.id.rotationSeekBar)
         scalingSeekBar = findViewById(R.id.scalingSeekBar)
         filtersButton = findViewById(R.id.filtersButton)
         filtersContainer = findViewById(R.id.filtersContainer)
+        brushSizeSeekBar = findViewById(R.id.brushSizeSeekBar)
+        retouchStrengthSeekBar = findViewById(R.id.retouchStrengthSeekBar)
+        retouchButton = findViewById(R.id.retouchButton)
+        cubeButton = findViewById(R.id.cubeButton)
 
         val closeButton: ImageView = findViewById(R.id.closeButton)
         val saveButton: ImageView = findViewById(R.id.saveButton)
@@ -77,6 +88,10 @@ class ImageEditActivity : AppCompatActivity() {
                     scaledBitmap = originalBitmap.copy(Bitmap.Config.ARGB_8888, true)
                 }
             }
+
+        cubeButton.setOnClickListener {
+            //canvasView.rotateCube()
+        }
 
         filtersButton.setOnClickListener {
             toggleFiltersVisibility()
@@ -109,6 +124,11 @@ class ImageEditActivity : AppCompatActivity() {
 
         findViewById<ImageButton>(R.id.filter7Button).setOnClickListener {
             applyHighContrastFilter()
+        }
+
+        retouchButton.setOnClickListener {
+            toggleSeekBarVisibility(brushSizeSeekBar)
+            toggleSeekBarVisibility(retouchStrengthSeekBar)
         }
 
         closeButton.setOnClickListener { finish() }
@@ -150,7 +170,6 @@ class ImageEditActivity : AppCompatActivity() {
                 originalBitmap = processedBitmap
             }
         }
-
     }
     private fun toggleSeekBarVisibility(seekBar: SeekBar) {
         if (seekBar.visibility == View.GONE) {
@@ -515,7 +534,6 @@ class ImageEditActivity : AppCompatActivity() {
             }
         }
     }
-
     private fun faceDetection(input: Mat, context: Context): Mat {
         val cascadeFile =
             File(context.getExternalFilesDir(null), "haarcascade_frontalface_alt2.xml")
