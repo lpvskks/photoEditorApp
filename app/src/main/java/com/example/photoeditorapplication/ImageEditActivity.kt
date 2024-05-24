@@ -14,7 +14,6 @@ import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
 import android.view.View
-import android.widget.Button
 import android.widget.HorizontalScrollView
 import android.widget.ImageButton
 import android.widget.ImageView
@@ -39,9 +38,9 @@ import java.io.FileOutputStream
 import org.opencv.imgproc.Imgproc
 import org.opencv.core.Scalar
 import java.util.Random
-import kotlin.math.atan2
-import kotlin.math.sqrt
 import kotlin.math.abs
+import kotlin.math.min
+
 class ImageEditActivity : AppCompatActivity() {
     private lateinit var imageView: ImageView
     private lateinit var originalBitmap: Bitmap
@@ -129,7 +128,7 @@ class ImageEditActivity : AppCompatActivity() {
         }
 
         findViewById<ImageButton>(R.id.filter5Button).setOnClickListener {
-            applyFishEyeEffect()
+            applySeaFilter()
         }
 
         findViewById<ImageButton>(R.id.filter6Button).setOnClickListener {
@@ -391,38 +390,37 @@ class ImageEditActivity : AppCompatActivity() {
         return noisyBitmap
     }
 
-    private fun applyFishEyeEffect() {
-        filteredBitmap = applyFishEyeEffect(originalBitmap, 300, 400, 500, 500)
+    private fun applySeaFilter() {
+        filteredBitmap = applySeaFilter(originalBitmap)
         imageView.setImageBitmap(filteredBitmap)
     }
 
-    private fun applyFishEyeEffect(source: Bitmap, startX: Int, startY: Int, width: Int, height: Int): Bitmap {
-        val fishEyeBitmap = source.copy(source.config, true)
+    private fun applySeaFilter(source: Bitmap): Bitmap {
+        val resultBitmap = Bitmap.createBitmap(source.width, source.height, source.config)
+        val amplitude = 20
 
-        val centerX = (startX + width / 2.0f)
-        val centerY = (startY + height / 2.0f)
-        val radius = Math.min(width / 2.0f, height / 2.0f)
+        for (x in 0 until source.width) {
+            for (y in 0 until source.height) {
+                val pixel = source.getPixel(x, y)
 
-        for (x in startX until startX + width) {
-            for (y in startY until startY + height) {
-                val dx = x - centerX
-                val dy = y - centerY
-                val dist = sqrt((dx * dx + dy * dy).toDouble())
-                if (dist < radius) {
-                    val angle = atan2(dy.toDouble(), dx.toDouble())
-                    val r = (Math.sqrt(radius * radius - dist * dist) / radius).toFloat()
-                    val newX = (centerX + r * dist * Math.cos(angle)).toInt()
-                    val newY = (centerY + r * dist * Math.sin(angle)).toInt()
+                val alpha = Color.alpha(pixel)
+                val red = Color.red(pixel)
+                val green = Color.green(pixel)
+                val blue = Color.blue(pixel)
 
-                    if (newX in startX until startX + width && newY in startY until startY + height) {
-                        val newPixel = source.getPixel(newX, newY)
-                        fishEyeBitmap.setPixel(x, y, newPixel)
-                    }
-                }
+                val newRed = min(255, (red * 1.2).toInt())
+                val newGreen = min(255, (green * 1.2).toInt())
+                val newBlue = min(255, (blue * 1.2).toInt() + 30) // Добавляем оттенок синего
+
+                val waveOffset = (amplitude * Math.sin(2 * Math.PI * y / 64)).toInt()
+                val newX = (x + waveOffset).coerceIn(0, source.width - 1)
+
+                val newPixel = Color.argb(alpha, newRed, newGreen, newBlue)
+                resultBitmap.setPixel(newX, y, newPixel)
             }
         }
 
-        return fishEyeBitmap
+        return resultBitmap
     }
 
     private fun applySepiaToneEffect() {

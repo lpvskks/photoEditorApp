@@ -161,5 +161,4 @@ class CubeView @JvmOverloads constructor(
         }
         return true
     }
-
 }
