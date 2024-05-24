@@ -66,21 +66,14 @@
                 android:layout_width="85dp"
                 android:layout_height="55dp"
                 android:backgroundTint="#00000000"
-                app:srcCompat="@drawable/retouch_1" />
+                app:srcCompat="@drawable/drop__1_" />
 
             <ImageButton
                 android:id="@+id/scallingButton"
                 android:layout_width="85dp"
                 android:layout_height="match_parent"
                 android:backgroundTint="#00000000"
-                app:srcCompat="@drawable/zoom_in_1" />
-
-            <ImageButton
-                android:id="@+id/cubeButton"
-                android:layout_width="85dp"
-                android:layout_height="55dp"
-                android:backgroundTint="#000000"
-                app:srcCompat="@drawable/cube_1" />
+                app:srcCompat="@drawable/placeholder" />
 
             <ImageButton
                 android:id="@+id/faceRecognitionButton"
@@ -88,6 +81,27 @@
                 android:layout_height="55dp"
                 android:backgroundTint="#000000"
                 app:srcCompat="@drawable/face_detection_1" />
+
+            <ImageButton
+                android:id="@+id/cubeButton"
+                android:layout_width="85dp"
+                android:layout_height="55dp"
+                android:backgroundTint="#000000"
+                app:srcCompat="@drawable/box__1_" />
+
+            <ImageButton
+                android:id="@+id/maskingButton"
+                android:layout_width="85dp"
+                android:layout_height="55dp"
+                android:backgroundTint="#000000"
+                app:srcCompat="@drawable/glasses__1_" />
+
+            <ImageButton
+                android:id="@+id/faceFiltersButton"
+                android:layout_width="85dp"
+                android:layout_height="55dp"
+                android:backgroundTint="#000000"
+                app:srcCompat="@drawable/happy_face__1_" />
         </LinearLayout>
     </HorizontalScrollView>
 
