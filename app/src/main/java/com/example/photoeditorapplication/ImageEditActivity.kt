@@ -1,5 +1,6 @@
 package com.example.photoeditorapplication
 
+import UnsharpMaskFilter
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.ContentValues
@@ -64,6 +65,11 @@ class ImageEditActivity : AppCompatActivity() {
     private lateinit var retouchButton: ImageButton
     private lateinit var cubeButton: ImageButton
     private lateinit var currentBitmap: Bitmap
+    private lateinit var unsharpMaskFilter: UnsharpMaskFilter
+
+    private lateinit var blurRadiusSeekBar: SeekBar
+    private lateinit var unsharpMaskThresholdSeekBar: SeekBar
+    private lateinit var maskingSlidersLayout: View
 
     private var rotationSeekBarVisible = false
     private var scalingSeekBarVisible = false
@@ -85,11 +91,20 @@ class ImageEditActivity : AppCompatActivity() {
         retouchStrengthSeekBar = findViewById(R.id.retouchStrengthSeekBar)
         retouchButton = findViewById(R.id.retouchButton)
         cubeButton = findViewById(R.id.cubeButton)
+        unsharpMaskFilter = UnsharpMaskFilter()
+
+        blurRadiusSeekBar = findViewById(R.id.blurRadiusSeekBar)
+        unsharpMaskThresholdSeekBar = findViewById(R.id.unsharpMaskThresholdSeekBar)
+        maskingSlidersLayout = findViewById(R.id.maskingSlidersLayout)
 
         val closeButton: ImageView = findViewById(R.id.closeButton)
         val saveButton: ImageView = findViewById(R.id.saveButton)
         val rotateButton: ImageView = findViewById(R.id.photoRotationButton)
         val scaleButton: ImageView = findViewById(R.id.scallingButton)
+        val maskingButton = findViewById<ImageButton>(R.id.maskingButton)
+        maskingButton.setOnClickListener {
+            toggleMaskingSeekBars()
+        }
 
         cubeButton.setOnClickListener {
             val intent = Intent(this, CubeActivity::class.java)
@@ -106,7 +121,26 @@ class ImageEditActivity : AppCompatActivity() {
             }
         }
 
-        rotationSeekBar.visibility = View.GONE
+        blurRadiusSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                applyUnsharpMask()
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+        })
+
+        unsharpMaskThresholdSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                applyUnsharpMask()
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+        })
+
+
+    rotationSeekBar.visibility = View.GONE
         scalingSeekBar.visibility = View.GONE
 
         filtersButton.setOnClickListener {
@@ -221,6 +255,33 @@ class ImageEditActivity : AppCompatActivity() {
     companion object {
         private const val REQUEST_STORAGE_PERMISSION_CODE = 101
     }
+
+    private fun toggleMaskingSeekBars() {
+        if (maskingSlidersLayout.visibility == View.GONE) {
+            maskingSlidersLayout.visibility = View.VISIBLE
+        } else {
+            maskingSlidersLayout.visibility = View.GONE
+        }
+    }
+
+
+    private fun applyUnsharpMask() {
+        val blurRadius = blurRadiusSeekBar.progress
+        val threshold = unsharpMaskThresholdSeekBar.progress
+
+        // Проверка значений
+        println("Applying Unsharp Mask with blurRadius: $blurRadius, threshold: $threshold")
+
+        val blurredBitmap = unsharpMaskFilter.gaussianBlur(currentBitmap, blurRadius)
+        val unsharpMaskBitmap = unsharpMaskFilter.unsharpMask(currentBitmap, blurredBitmap, threshold)
+
+        // Проверка выполнения
+        println("Unsharp Mask applied, updating ImageView")
+
+        imageView.setImageBitmap(unsharpMaskBitmap)
+
+    }
+
     private fun applyNegativeFilter() {
         filteredBitmap = applyNegativeFilter(originalBitmap)
         imageView.setImageBitmap(filteredBitmap)

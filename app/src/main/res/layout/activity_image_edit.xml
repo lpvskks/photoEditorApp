@@ -108,12 +108,11 @@
         android:id="@+id/selectedImageView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@id/toolsScrollView"
+        android:layout_above="@+id/filtersScrollView"
         android:layout_below="@id/closeButton"
-        android:layout_marginTop="2dp"
-        android:layout_marginBottom="16dp"
         android:background="#000000"
         android:scaleType="centerInside" />
+
     <SeekBar
         android:id="@+id/rotationSeekBar"
         android:layout_width="match_parent"
@@ -136,11 +135,12 @@
         android:visibility="gone" />
 
     <LinearLayout
+        android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
         android:layout_above="@id/toolsScrollView"
-        android:layout_marginBottom="10dp">
+        android:layout_marginBottom="10dp"
+        android:orientation="vertical">
 
         <SeekBar
             android:id="@+id/brushSizeSeekBar"
@@ -165,7 +165,8 @@
     <HorizontalScrollView
         android:id="@+id/filtersScrollView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="64dp"
+        android:layout_above="@+id/linearLayout"
         android:background="#000000">
 
         <LinearLayout
@@ -230,7 +231,53 @@
                 android:layout_height="55dp"
                 android:backgroundTint="#00000000"
                 app:srcCompat="@drawable/filter6" />
+
+            <ImageButton
+                android:id="@+id/filter9Button"
+                android:layout_width="85dp"
+                android:layout_height="55dp"
+                android:backgroundTint="#00000000"
+                app:srcCompat="@drawable/filter6" />
         </LinearLayout>
     </HorizontalScrollView>
+
+    <LinearLayout
+        android:id="@+id/maskingSlidersLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_above="@id/toolsScrollView"
+        android:layout_marginBottom="10dp"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Blur Radius"
+            android:textColor="#FFFFFF"
+            android:padding="4dp" />
+
+        <SeekBar
+            android:id="@+id/blurRadiusSeekBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:max="25"
+            android:progress="0" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Unsharp Mask Threshold"
+            android:textColor="#FFFFFF"
+            android:padding="4dp" />
+
+        <SeekBar
+            android:id="@+id/unsharpMaskThresholdSeekBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:max="100"
+            android:progress="0" />
+    </LinearLayout>
+
 
 </RelativeLayout>
