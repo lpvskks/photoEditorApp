@@ -80,7 +80,7 @@
                 android:layout_width="85dp"
                 android:layout_height="55dp"
                 android:backgroundTint="#000000"
-                app:srcCompat="@drawable/face_detection_1" />
+                app:srcCompat="@drawable/sad_face" />
 
             <ImageButton
                 android:id="@+id/cubeButton"
