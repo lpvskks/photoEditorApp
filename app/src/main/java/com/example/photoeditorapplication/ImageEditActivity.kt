@@ -56,10 +56,12 @@ class ImageEditActivity : AppCompatActivity() {
     private lateinit var retouchStrengthSeekBar: SeekBar
     private lateinit var retouchButton: ImageButton
     private lateinit var cubeButton: ImageButton
+    private lateinit var currentBitmap: Bitmap
 
     private var rotationSeekBarVisible = false
     private var scalingSeekBarVisible = false
     private var filtersVisible = false
+    private var isFaceDetectionApplied = false
     @SuppressLint("SuspiciousIndentation")
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -88,6 +90,7 @@ class ImageEditActivity : AppCompatActivity() {
                 imageView.drawable?.let {
                     originalBitmap = (it as BitmapDrawable).bitmap
                     scaledBitmap = originalBitmap.copy(Bitmap.Config.ARGB_8888, true)
+                    currentBitmap = originalBitmap.copy(originalBitmap.config, true)
                 }
             }
 
@@ -172,8 +175,6 @@ class ImageEditActivity : AppCompatActivity() {
             override fun onStopTrackingTouch(seekBar: SeekBar) {}
         })
 
-
-
         val buttonFaceDetection: ImageView = findViewById(R.id.faceRecognitionButton)
         buttonFaceDetection.setOnClickListener {
             rotationSeekBarVisible = false
@@ -181,9 +182,13 @@ class ImageEditActivity : AppCompatActivity() {
             filtersVisible = false
             updateUIVisibility()
 
-            originalBitmap.let { bitmap ->
+            if (isFaceDetectionApplied) {
+                currentBitmap = originalBitmap.copy(originalBitmap.config, true)
+                imageView.setImageBitmap(currentBitmap)
+                isFaceDetectionApplied = false
+            } else {
                 val mat = Mat()
-                Utils.bitmapToMat(bitmap, mat)
+                Utils.bitmapToMat(currentBitmap, mat)
                 val faceBitmap = faceDetection(mat, this)
                 val processedBitmap = Bitmap.createBitmap(
                     faceBitmap.cols(),
@@ -192,7 +197,8 @@ class ImageEditActivity : AppCompatActivity() {
                 )
                 Utils.matToBitmap(faceBitmap, processedBitmap)
                 imageView.setImageBitmap(processedBitmap)
-                originalBitmap = processedBitmap
+                currentBitmap = processedBitmap
+                isFaceDetectionApplied = true
             }
         }
     }
