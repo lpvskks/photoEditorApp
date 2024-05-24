@@ -75,6 +75,7 @@ class ImageEditActivity : AppCompatActivity() {
     private var scalingSeekBarVisible = false
     private var filtersVisible = false
     private var isFaceDetectionApplied = false
+
     @SuppressLint("SuspiciousIndentation")
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -130,7 +131,8 @@ class ImageEditActivity : AppCompatActivity() {
             override fun onStopTrackingTouch(seekBar: SeekBar?) {}
         })
 
-        unsharpMaskThresholdSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+        unsharpMaskThresholdSeekBar.setOnSeekBarChangeListener(object :
+            SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 applyUnsharpMask()
             }
@@ -207,14 +209,15 @@ class ImageEditActivity : AppCompatActivity() {
                 imageView.setImageBitmap(rotatedBitmap)
             }
 
-            override fun onStartTrackingTouch(seekBar: SeekBar) { }
-            override fun onStopTrackingTouch(seekBar: SeekBar) { }
+            override fun onStartTrackingTouch(seekBar: SeekBar) {}
+            override fun onStopTrackingTouch(seekBar: SeekBar) {}
         })
 
         scalingSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
                 scaleImage(progress)
             }
+
             override fun onStartTrackingTouch(seekBar: SeekBar) {}
             override fun onStopTrackingTouch(seekBar: SeekBar) {}
         })
@@ -246,6 +249,7 @@ class ImageEditActivity : AppCompatActivity() {
             }
         }
     }
+
     private fun updateUIVisibility() {
         rotationSeekBar.visibility = if (rotationSeekBarVisible) View.VISIBLE else View.GONE
         scalingSeekBar.visibility = if (scalingSeekBarVisible) View.VISIBLE else View.GONE
@@ -273,7 +277,8 @@ class ImageEditActivity : AppCompatActivity() {
         println("Applying Unsharp Mask with blurRadius: $blurRadius, threshold: $threshold")
 
         val blurredBitmap = unsharpMaskFilter.gaussianBlur(currentBitmap, blurRadius)
-        val unsharpMaskBitmap = unsharpMaskFilter.unsharpMask(currentBitmap, blurredBitmap, threshold)
+        val unsharpMaskBitmap =
+            unsharpMaskFilter.unsharpMask(currentBitmap, blurredBitmap, threshold)
 
         // Проверка выполнения
         println("Unsharp Mask applied, updating ImageView")
@@ -442,6 +447,7 @@ class ImageEditActivity : AppCompatActivity() {
         filteredBitmap = applyNoiseBlurFilter(originalBitmap, 70f)
         imageView.setImageBitmap(filteredBitmap)
     }
+
     private fun applyNoiseBlurFilter(source: Bitmap, magnitude: Float): Bitmap {
         val width = source.width
         val height = source.height
@@ -531,7 +537,8 @@ class ImageEditActivity : AppCompatActivity() {
         filteredBitmap = applySepiaToneEffect(originalBitmap)
         imageView.setImageBitmap(filteredBitmap)
     }
-    private fun applySepiaToneEffect(source: Bitmap) : Bitmap {
+
+    private fun applySepiaToneEffect(source: Bitmap): Bitmap {
         val sepiaBitmap = source.copy(source.config, true)
 
         for (x in 0 until source.width) {
@@ -545,11 +552,13 @@ class ImageEditActivity : AppCompatActivity() {
                 val outputG = (r * 0.349 + g * 0.686 + b * 0.168).toInt()
                 val outputB = (r * 0.272 + g * 0.534 + b * 0.131).toInt()
 
-                sepiaBitmap.setPixel(x, y, Color.rgb(
-                    if (outputR > 255) 255 else outputR,
-                    if (outputG > 255) 255 else outputG,
-                    if (outputB > 255) 255 else outputB
-                ))
+                sepiaBitmap.setPixel(
+                    x, y, Color.rgb(
+                        if (outputR > 255) 255 else outputR,
+                        if (outputG > 255) 255 else outputG,
+                        if (outputB > 255) 255 else outputB
+                    )
+                )
             }
         }
 
@@ -649,8 +658,16 @@ class ImageEditActivity : AppCompatActivity() {
     }
 
     private fun requestStoragePermission() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), REQUEST_STORAGE_PERMISSION_CODE)
+        if (ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                REQUEST_STORAGE_PERMISSION_CODE
+            )
         } else {
             saveImage()
         }
@@ -659,7 +676,10 @@ class ImageEditActivity : AppCompatActivity() {
     private fun saveImage() {
         val bitmap = (imageView.drawable as BitmapDrawable).bitmap
         val values = ContentValues().apply {
-            put(MediaStore.Images.Media.DISPLAY_NAME, "edited_image_${System.currentTimeMillis()}.jpg")
+            put(
+                MediaStore.Images.Media.DISPLAY_NAME,
+                "edited_image_${System.currentTimeMillis()}.jpg"
+            )
             put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
             put(MediaStore.Images.Media.RELATIVE_PATH, Environment.DIRECTORY_PICTURES)
         }
@@ -676,6 +696,7 @@ class ImageEditActivity : AppCompatActivity() {
             }
         }
     }
+
     private fun faceDetection(input: Mat, context: Context): Mat {
         val cascadeFile =
             File(context.getExternalFilesDir(null), "haarcascade_frontalface_alt2.xml")

@@ -56,8 +56,8 @@
                 android:layout_width="85dp"
                 android:layout_height="55dp"
                 android:backgroundTint="#00000000"
-                app:srcCompat="@drawable/colours"
-                android:onClick="onFiltersButtonClicked" />
+                android:onClick="onFiltersButtonClicked"
+                app:srcCompat="@drawable/colours" />
 
             <ImageButton
                 android:id="@+id/retouchButton"
@@ -139,9 +139,9 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
         android:layout_above="@id/toolsScrollView"
-        android:layout_marginBottom="10dp">
+        android:layout_marginBottom="10dp"
+        android:orientation="vertical">
 
         <SeekBar
             android:id="@+id/brushSizeSeekBar"
@@ -166,7 +166,8 @@
     <HorizontalScrollView
         android:id="@+id/filtersScrollView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="64dp"
+        android:layout_alignBottom="@+id/selectedImageView"
         android:background="#000000">
 
         <LinearLayout
@@ -245,17 +246,17 @@
         android:id="@+id/maskingSlidersLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
         android:layout_above="@id/toolsScrollView"
         android:layout_marginBottom="10dp"
+        android:orientation="vertical"
         android:visibility="gone">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:padding="4dp"
             android:text="Blur Radius"
-            android:textColor="#FFFFFF"
-            android:padding="4dp" />
+            android:textColor="#FFFFFF" />
 
         <SeekBar
             android:id="@+id/blurRadiusSeekBar"
@@ -267,9 +268,9 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:padding="4dp"
             android:text="Unsharp Mask Threshold"
-            android:textColor="#FFFFFF"
-            android:padding="4dp" />
+            android:textColor="#FFFFFF" />
 
         <SeekBar
             android:id="@+id/unsharpMaskThresholdSeekBar"
