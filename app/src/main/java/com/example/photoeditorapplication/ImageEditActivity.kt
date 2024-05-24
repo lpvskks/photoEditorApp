@@ -7,7 +7,14 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.graphics.BitmapShader
+import android.graphics.BlurMaskFilter
+import android.graphics.Canvas
 import android.graphics.Color
+import android.graphics.ColorMatrix
+import android.graphics.ColorMatrixColorFilter
+import android.graphics.Paint
+import android.graphics.Shader
 import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.os.Bundle
@@ -122,7 +129,6 @@ class ImageEditActivity : AppCompatActivity() {
             applyMonochromeFilter()
         }
 
-
         findViewById<ImageButton>(R.id.filter4Button).setOnClickListener {
             applyNoiseBlurFilter()
         }
@@ -137,6 +143,10 @@ class ImageEditActivity : AppCompatActivity() {
 
         findViewById<ImageButton>(R.id.filter7Button).setOnClickListener {
             applyHighContrastFilter()
+        }
+
+        findViewById<ImageButton>(R.id.filter8Button).setOnClickListener {
+            applyPsychedelicFilter()
         }
 
         rotateButton.setOnClickListener {
@@ -423,14 +433,45 @@ class ImageEditActivity : AppCompatActivity() {
         return resultBitmap
     }
 
+    private fun applyPsychedelicFilter() {
+        filteredBitmap = applyPsychedelicFilter(originalBitmap)
+        imageView.setImageBitmap(filteredBitmap)
+    }
+
+    private fun applyPsychedelicFilter(source: Bitmap): Bitmap {
+        val resultBitmap = Bitmap.createBitmap(source.width, source.height, source.config)
+
+        for (x in 0 until source.width) {
+            for (y in 0 until source.height) {
+                val pixel = source.getPixel(x, y)
+
+                val alpha = Color.alpha(pixel)
+                val red = Color.red(pixel)
+                val green = Color.green(pixel)
+                val blue = Color.blue(pixel)
+
+                val newRed = (Math.sin(0.1 * red + 2.0) * 255).toInt().coerceIn(0, 255)
+                val newGreen = (Math.sin(0.1 * green + 4.0) * 255).toInt().coerceIn(0, 255)
+                val newBlue = (Math.sin(0.1 * blue + 6.0) * 255).toInt().coerceIn(0, 255)
+
+                val adjustedRed = (newRed * 1.2).toInt().coerceIn(0, 255)
+                val adjustedGreen = (newGreen * 1.2).toInt().coerceIn(0, 255)
+                val adjustedBlue = (newBlue * 1.2).toInt().coerceIn(0, 255)
+
+                val newPixel = Color.argb(alpha, adjustedRed, adjustedGreen, adjustedBlue)
+                resultBitmap.setPixel(x, y, newPixel)
+            }
+        }
+        return resultBitmap
+    }
+
+
     private fun applySepiaToneEffect() {
         filteredBitmap = applySepiaToneEffect(originalBitmap)
         imageView.setImageBitmap(filteredBitmap)
     }
     private fun applySepiaToneEffect(source: Bitmap) : Bitmap {
         val sepiaBitmap = source.copy(source.config, true)
-
-        val sepiaDepth = 20
 
         for (x in 0 until source.width) {
             for (y in 0 until source.height) {

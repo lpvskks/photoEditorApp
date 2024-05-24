@@ -180,7 +180,6 @@
                 android:layout_width="85dp"
                 android:layout_height="55dp"
                 android:backgroundTint="#00000000"
-                android:contentDescription="TODO"
                 app:srcCompat="@drawable/filter1" />
 
             <ImageButton
@@ -225,6 +224,12 @@
                 android:backgroundTint="#00000000"
                 app:srcCompat="@drawable/filter6" />
 
+            <ImageButton
+                android:id="@+id/filter8Button"
+                android:layout_width="85dp"
+                android:layout_height="55dp"
+                android:backgroundTint="#00000000"
+                app:srcCompat="@drawable/filter6" />
         </LinearLayout>
     </HorizontalScrollView>
 
