@@ -107,11 +107,11 @@
     <ImageView
         android:id="@+id/selectedImageView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_above="@id/toolsScrollView"
         android:layout_below="@id/closeButton"
-        android:layout_marginTop="2dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginTop="13dp"
+        android:layout_marginBottom="84dp"
         android:background="#000000"
         android:scaleType="centerInside" />
 
@@ -137,6 +137,7 @@
         android:visibility="gone" />
 
     <LinearLayout
+        android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@id/toolsScrollView"
@@ -166,8 +167,9 @@
     <HorizontalScrollView
         android:id="@+id/filtersScrollView"
         android:layout_width="match_parent"
-        android:layout_height="64dp"
-        android:layout_alignBottom="@+id/selectedImageView"
+        android:layout_height="55dp"
+        android:layout_alignBottom="@+id/linearLayout"
+        android:layout_marginBottom="17dp"
         android:background="#000000">
 
         <LinearLayout
