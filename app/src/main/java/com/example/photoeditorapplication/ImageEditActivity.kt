@@ -4,6 +4,7 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.content.ContentValues
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Color
@@ -13,6 +14,7 @@ import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
 import android.view.View
+import android.widget.Button
 import android.widget.HorizontalScrollView
 import android.widget.ImageButton
 import android.widget.ImageView
@@ -40,7 +42,6 @@ import java.util.Random
 import kotlin.math.atan2
 import kotlin.math.sqrt
 import kotlin.math.abs
-
 class ImageEditActivity : AppCompatActivity() {
     private lateinit var imageView: ImageView
     private lateinit var originalBitmap: Bitmap
@@ -84,23 +85,23 @@ class ImageEditActivity : AppCompatActivity() {
         val rotateButton: ImageView = findViewById(R.id.photoRotationButton)
         val scaleButton: ImageView = findViewById(R.id.scallingButton)
 
+        cubeButton.setOnClickListener {
+            val intent = Intent(this, CubeActivity::class.java)
+            startActivity(intent)
+        }
+
         val imageUri: Uri? = intent.getParcelableExtra("imageUri")
-            if (imageUri != null) {
-                imageView.setImageURI(imageUri)
-                imageView.drawable?.let {
-                    originalBitmap = (it as BitmapDrawable).bitmap
-                    scaledBitmap = originalBitmap.copy(Bitmap.Config.ARGB_8888, true)
-                    currentBitmap = originalBitmap.copy(originalBitmap.config, true)
-                }
+        if (imageUri != null) {
+            imageView.setImageURI(imageUri)
+            imageView.drawable?.let {
+                originalBitmap = (it as BitmapDrawable).bitmap
+                scaledBitmap = originalBitmap.copy(Bitmap.Config.ARGB_8888, true)
+                currentBitmap = originalBitmap.copy(originalBitmap.config, true)
             }
+        }
 
         rotationSeekBar.visibility = View.GONE
         scalingSeekBar.visibility = View.GONE
-
-
-        cubeButton.setOnClickListener {
-            //canvasView.rotateCube()
-        }
 
         filtersButton.setOnClickListener {
             filtersVisible = !filtersVisible

@@ -37,14 +37,12 @@
         android:fillViewport="true"
         android:scrollbars="horizontal">
 
-
         <LinearLayout
             android:id="@+id/scrollViewContainer"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:background="#000000"
             android:orientation="horizontal">
-
 
             <ImageButton
                 android:id="@+id/photoRotationButton"
@@ -103,6 +101,7 @@
                 android:backgroundTint="#000000"
                 app:srcCompat="@drawable/happy_face__1_" />
         </LinearLayout>
+
     </HorizontalScrollView>
 
     <ImageView
@@ -181,6 +180,7 @@
                 android:layout_width="85dp"
                 android:layout_height="55dp"
                 android:backgroundTint="#00000000"
+                android:contentDescription="TODO"
                 app:srcCompat="@drawable/filter1" />
 
             <ImageButton
