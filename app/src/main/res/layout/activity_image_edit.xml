@@ -184,63 +184,57 @@
                 android:layout_width="85dp"
                 android:layout_height="55dp"
                 android:backgroundTint="#00000000"
-                app:srcCompat="@drawable/filter1" />
+                app:srcCompat="@drawable/photo_5371002160545914771_x__1_" />
 
             <ImageButton
                 android:id="@+id/filter2Button"
                 android:layout_width="85dp"
                 android:layout_height="55dp"
                 android:backgroundTint="#00000000"
-                app:srcCompat="@drawable/filter2" />
+                app:srcCompat="@drawable/photo_5370904840881955432_x__2_" />
 
             <ImageButton
                 android:id="@+id/filter3Button"
                 android:layout_width="85dp"
                 android:layout_height="55dp"
                 android:backgroundTint="#00000000"
-                app:srcCompat="@drawable/filter3" />
+                app:srcCompat="@drawable/photo_5370904840881955433_x__1_" />
 
             <ImageButton
                 android:id="@+id/filter4Button"
                 android:layout_width="85dp"
                 android:layout_height="55dp"
                 android:backgroundTint="#00000000"
-                app:srcCompat="@drawable/filter4" />
+                app:srcCompat="@drawable/photo_5370904840881955434_x__1_" />
 
             <ImageButton
                 android:id="@+id/filter5Button"
                 android:layout_width="85dp"
                 android:layout_height="55dp"
                 android:backgroundTint="#00000000"
-                app:srcCompat="@drawable/filter5" />
+                app:srcCompat="@drawable/photo_5370904840881955435_x__1_" />
 
             <ImageButton
                 android:id="@+id/filter6Button"
                 android:layout_width="85dp"
                 android:layout_height="55dp"
                 android:backgroundTint="#00000000"
-                app:srcCompat="@drawable/filter6" />
+                app:srcCompat="@drawable/photo_5370904840881955436_x__1_" />
 
             <ImageButton
                 android:id="@+id/filter7Button"
                 android:layout_width="85dp"
                 android:layout_height="55dp"
                 android:backgroundTint="#00000000"
-                app:srcCompat="@drawable/filter6" />
+                app:srcCompat="@drawable/photo_5370904840881955437_x__1_" />
 
             <ImageButton
                 android:id="@+id/filter8Button"
                 android:layout_width="85dp"
                 android:layout_height="55dp"
                 android:backgroundTint="#00000000"
-                app:srcCompat="@drawable/filter6" />
+                app:srcCompat="@drawable/photo_5370904840881955438_x__1_" />
 
-            <ImageButton
-                android:id="@+id/filter9Button"
-                android:layout_width="85dp"
-                android:layout_height="55dp"
-                android:backgroundTint="#00000000"
-                app:srcCompat="@drawable/filter6" />
         </LinearLayout>
     </HorizontalScrollView>
 
